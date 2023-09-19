@@ -1,0 +1,13 @@
+# @package _global_
+job_name: planTF
+py_func: train
+objective_aggregate_mode: mean
+
+defaults:
+  - override /data_augmentation:
+      - state_perturbation
+  - override /splitter: nuplan
+  - override /model: planTF
+  - override /scenario_filter: training_scenarios_1M
+  - override /custom_trainer: planTF
+  - override /lightning: custom_lightning
