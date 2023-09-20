@@ -7,8 +7,8 @@ This is the official repository of
 <a href="https://jchengai.github.io/planTF">
 <img src="https://img.shields.io/badge/Project-Page-blue?style=flat">
 </a>
-<a href='todo' style='padding-left: 0.5rem;'>
-    <img src='https://img.shields.io/badge/arXiv-PDF (coming soon)-red?style=flat&logo=arXiv&logoColor=wihte' alt='arXiv PDF'>
+<a href='https://arxiv.org/pdf/2309.10443.pdf' style='padding-left: 0.5rem;'>
+    <img src='https://img.shields.io/badge/arXiv-PDF-red?style=flat&logo=arXiv&logoColor=wihte' alt='arXiv PDF'>
 </a>
 </p>
 
@@ -261,4 +261,15 @@ Many thanks to the open-source community, also checkout these works:
 
 ## Citation
 
-coming soon.
+If you find this repo useful, please consider giving us a star 🌟 and citing our related paper.
+
+```bibtex
+@misc{cheng2023plantf,
+      title={Rethinking Imitation-based Planner for Autonomous Driving},
+      author={Jie Cheng and Yingbing Chen and Xiaodong Mei and Bowen Yang and Bo Li and Ming Liu},
+      year={2023},
+      eprint={2309.10443},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO}
+}
+```
