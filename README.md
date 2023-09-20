@@ -12,8 +12,8 @@ This is the official repository of
 </a>
 </p>
 
-<image src="https://github.com/jchengai/planTF/assets/86758357/137e84b9-2a9b-4f03-8440-23917a894a49" height=400 width=400>
-<image src="https://github.com/jchengai/planTF/assets/86758357/a66e1824-a4ae-43bd-8f85-c9544e0c5de1" height=400 width=400>
+<image src="https://github.com/jchengai/planTF/assets/86758357/42170613-8759-4359-80ce-0b17c51676b8" height=400 width=400>
+<image src="https://github.com/jchengai/planTF/assets/86758357/2c06a97e-d543-4b82-8a75-bbf859abe148" height=400 width=400>
 
 ## Highlight
 - A good starting point for research on learning-based planner on the [nuPlan](https://www.nuscenes.org/nuplan) dataset. This repo provides detailed instructions on data preprocess, training and benchmark.
