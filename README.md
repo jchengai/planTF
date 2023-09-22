@@ -96,8 +96,8 @@ Place the trained models at `planTF/checkpoints/`
 | Model                  | Document                                              | Download                                                                                                                                          |
 | ---------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
 | PlanTF (state6+SDE)    | -                                                     | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/jchengai_connect_ust_hk/EW7HbklkAhVNpcDUEga2aLABxioVA1S98vyqk2VbziYfTw?e=fe3CxI) |
-| RasterModel            | [Doc](./docs/other_baseline.md#rastermodel)           | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/jchengai_connect_ust_hk/EcfVyHFUoV1KhAv7D_JPqtwBlwR-2zT2suGHD1rLXsBtKA?e=PIwD7U) |
-| UrbanDriver (openloop) | [Doc](./docs/other_baseline.md#urbandriver-open-loop) | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/jchengai_connect_ust_hk/EbM_BSpFS9NBqIWuhlVHMrYBMrSOtusHjH6hwfamZCuI_Q?e=Q2bN75) |
+| RasterModel            | [Doc](./docs/other_baselines.md#rastermodel)           | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/jchengai_connect_ust_hk/EcfVyHFUoV1KhAv7D_JPqtwBlwR-2zT2suGHD1rLXsBtKA?e=PIwD7U) |
+| UrbanDriver (openloop) | [Doc](./docs/other_baselines.md#urbandriver-open-loop) | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/jchengai_connect_ust_hk/EbM_BSpFS9NBqIWuhlVHMrYBMrSOtusHjH6hwfamZCuI_Q?e=Q2bN75) |
 
 
 
