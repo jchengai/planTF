@@ -13,7 +13,7 @@ from nuplan.planning.script.utils import set_default_path
 from nuplan.planning.training.experiments.caching import cache_data
 from omegaconf import DictConfig
 
-from src.custom_training import (
+from src.custom_training.custom_training_builder import (
     TrainingEngine,
     build_training_engine,
     update_config_for_training,
