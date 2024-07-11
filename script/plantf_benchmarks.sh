@@ -12,9 +12,9 @@ for challenge in $CHALLENGES; do
         scenario_builder=nuplan_challenge \
         scenario_filter=$SPLIT \
         worker.threads_per_node=20 \
-        experiment_uid=$SPLIT/$planner \
+        experiment_uid=$SPLIT/$PLANNER \
         verbose=true \
-        planner.imitation_planne.planner_ckpt="$CKPT_ROOT/$PLANNER.ckpt"
+        planner.imitation_planner.planner_ckpt="$CKPT_ROOT/$PLANNER.ckpt"
 done
 
 
