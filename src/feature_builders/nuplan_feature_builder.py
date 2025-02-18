@@ -214,7 +214,7 @@ class NuplanFeatureBuilder(AbstractFeatureBuilder):
         velocity = np.zeros((T, 2), dtype=np.float64)
         acceleration = np.zeros((T, 2), dtype=np.float64)
         shape = np.zeros((T, 2), dtype=np.float64)
-        valid_mask = np.ones(T, dtype=np.bool)
+        valid_mask = np.ones(T, dtype=bool)
 
         for t, state in enumerate(ego_states):
             position[t] = state.rear_axle.array
@@ -260,7 +260,7 @@ class NuplanFeatureBuilder(AbstractFeatureBuilder):
         velocity = np.zeros((N, T, 2), dtype=np.float64)
         shape = np.zeros((N, T, 2), dtype=np.float64)
         category = np.zeros((N,), dtype=np.int8)
-        valid_mask = np.zeros((N, T), dtype=np.bool)
+        valid_mask = np.zeros((N, T), dtype=bool)
 
         if N == 0:
             return {
@@ -351,10 +351,10 @@ class NuplanFeatureBuilder(AbstractFeatureBuilder):
         polygon_position = np.zeros((M, 2), dtype=np.float64)
         polygon_orientation = np.zeros(M, dtype=np.float64)
         polygon_type = np.zeros(M, dtype=np.int8)
-        polygon_on_route = np.zeros(M, dtype=np.bool)
+        polygon_on_route = np.zeros(M, dtype=bool)
         polygon_tl_status = np.zeros(M, dtype=np.int8)
         polygon_speed_limit = np.zeros(M, dtype=np.float64)
-        polygon_has_speed_limit = np.zeros(M, dtype=np.bool)
+        polygon_has_speed_limit = np.zeros(M, dtype=bool)
 
         for lane in lane_objects:
             object_id = int(lane.id)
