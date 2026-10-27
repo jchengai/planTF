@@ -1,0 +1,188 @@
+# mini_eval_v2.yaml
+#
+# Coverage-driven expanded evaluation benchmark.
+# 84 scenarios across 8 buckets designed to expose all known
+# planTF weakness areas present in the mini split.
+#
+# Bucket composition:
+#   intersections     14  (traversing_intersection x4, traversing_tl x3,
+#                          unprotected_cross x2, left_turn x1, right_turn x1,
+#                          all_way_stop x1, plus 2 v1 known-hard tokens)
+#   lane_change        7  (all available tokens in mini — coverage limited)
+#   lead_vehicle      10  (following_slow x5, following_lead x3, stopping x2)
+#   pedestrian        11  (near_ped_crosswalk x4, waiting_ped x3,
+#                          near_ped_with_ego x2, stopping_crosswalk x2)
+#   stop_and_go       12  (stationary_tl_lead x4, stationary_tl_nolead x3,
+#                          stationary_in_traffic x3, accel_tl x2)
+#   high_medium_speed 12  (high_speed x5, medium_speed x5, low_speed x2)
+#   near_long_vehicle 10  (near_long x5, near_multiple x3, near_highspeed x2)
+#   edge_cases         8  (high_lat_accel x2, trafficcone x2,
+#                          construction x2, multi_ped x2)
+#
+# Known-hard scenarios from mini_benchmark_v1 (score=0.000) are explicitly
+# included regardless of bucket counts.
+#
+# See docs/mini_scenario_inventory.md for full type availability and
+# lane-change limitation notes.
+# See docs/EVAL_PLAN.md for evaluation philosophy.
+#
+# DO NOT add random tokens here. Any additions must be documented with
+# type, log, and rationale in docs/mini_scenario_inventory.md.
+
+defaults:
+  - mini
+
+scenario_tokens:
+
+  # ── BUCKET: intersections (14 total) ─────────────────────────────────────
+  # traversing_intersection (4) — unprotected, non-signalized
+  - "eef580e1ba1f5109"   # traversing_intersection  2021.10.06.07.26.10_veh-52
+  - "060ad54472b05ea0"   # traversing_intersection  2021.06.14.16.32.09_veh-35
+  - "688f4053f8a4536d"   # traversing_intersection  2021.06.09.17.23.18_veh-38
+  - "d0075a0c95e05ef0"   # traversing_intersection  2021.06.09.14.03.17_veh-12
+
+  # traversing_traffic_light_intersection (3) — signalized, new tokens
+  - "edb1d6776eb25f5d"   # traversing_traffic_light_intersection  2021.06.07.18.53.26_veh-26
+  - "9795ca33309c56bb"   # traversing_traffic_light_intersection  2021.05.12.22.00.38_veh-35
+  - "e64e3a2b210d5f95"   # traversing_traffic_light_intersection  2021.06.14.17.26.26_veh-38
+
+  # known-hard from v1 benchmark (score=0.000) — kept to track regression
+  - "a3b4b8e47696534e"   # traversing_traffic_light_intersection  [V1-HARD] driving_dir=0
+  - "e4d09605e2b6563e"   # on_traffic_light_intersection          [V1-HARD] comfort=0 ttc=0
+
+  # unprotected cross turns (2) — suspected planTF weakness
+  - "48a1b05d9c6f5fd7"   # starting_unprotected_cross_turn  2021.08.17.16.57.11_veh-08
+  - "2f10f7862e045e37"   # starting_unprotected_cross_turn  2021.10.11.02.57.41_veh-50
+
+  # turning + all-way-stop (3)
+  - "d9ee9cf40a84520f"   # starting_left_turn        2021.07.24.20.37.45_veh-17
+  - "98533fb063035b53"   # starting_right_turn       2021.06.14.18.33.41_veh-35
+  - "439212fcfe96546f"   # on_all_way_stop_intersection  2021.06.09.17.23.18_veh-38
+
+  # ── BUCKET: lane_change (7 total — all available in mini) ────────────────
+  # NOTE: Mini split has only 44 lane-change tokens across all 64 logs.
+  # All selected; coverage is sample-size limited. See inventory notes.
+  - "6d1811320c635e82"   # changing_lane        2021.06.23.15.56.12_veh-16
+  - "f6f9afda75e251ae"   # changing_lane        2021.05.25.14.16.10_veh-35
+  - "9e30155b8bb55fd9"   # changing_lane        2021.08.17.16.57.11_veh-08
+  - "b2a5c363d1dd5abe"   # changing_lane_to_left  2021.06.09.14.58.55_veh-35
+  - "a59a8c3490f154e2"   # changing_lane_to_left  2021.06.07.18.53.26_veh-26
+  - "713fa73e30435d98"   # changing_lane_to_right 2021.10.05.07.10.04_veh-52
+  - "a577dbd8f4c65870"   # changing_lane_to_right 2021.06.08.14.35.24_veh-26
+
+  # ── BUCKET: lead_vehicle (10 total) ──────────────────────────────────────
+  # following_lane_with_slow_lead (5) — model generally handles well; baseline check
+  - "6eb792743e725c3e"   # following_lane_with_slow_lead  2021.10.01.19.16.42_veh-28
+  - "90c69bf67c2b5190"   # following_lane_with_slow_lead  2021.06.14.16.48.02_veh-12
+  - "84f078f561735221"   # following_lane_with_slow_lead  2021.05.25.14.16.10_veh-35
+  - "2a3c89c0b3cb57d1"   # following_lane_with_slow_lead  2021.07.16.18.06.21_veh-38
+  - "06d5c4ba2e805fc5"   # following_lane_with_slow_lead  2021.06.23.16.54.19_veh-35
+
+  # following_lane_with_lead (3) — normal following
+  - "f30966cb403c5b57"   # following_lane_with_lead  2021.07.09.17.06.37_veh-35
+  - "3db7cabddcbe591e"   # following_lane_with_lead  2021.06.28.16.29.11_veh-38
+  - "f67095affea65329"   # following_lane_with_lead  2021.06.14.19.22.11_veh-38
+
+  # stopping_with_lead (2) — braking behavior
+  - "444b0fa2a56853cb"   # stopping_with_lead  2021.10.06.17.43.07_veh-28
+  - "8b31262b933d5dbc"   # stopping_with_lead  2021.06.28.15.02.02_veh-38
+
+  # ── BUCKET: pedestrian (11 total) ────────────────────────────────────────
+  # near_pedestrian_on_crosswalk (4)
+  - "f898e310585a5d26"   # near_pedestrian_on_crosswalk  2021.06.14.17.26.26_veh-38
+  - "da3175b14f6c51f5"   # near_pedestrian_on_crosswalk  2021.08.17.17.17.01_veh-45
+  - "a7712187b9905178"   # near_pedestrian_on_crosswalk  2021.06.14.18.33.41_veh-35
+  - "0d4fd54859945ef8"   # near_pedestrian_on_crosswalk  2021.06.09.12.39.51_veh-26
+
+  # waiting_for_pedestrian_to_cross (3) — active yield
+  - "222b00bfb1845aa1"   # waiting_for_pedestrian_to_cross  2021.06.14.16.32.09_veh-35
+  - "53f5ab8afa615ef2"   # waiting_for_pedestrian_to_cross  2021.06.09.17.23.18_veh-38
+  - "b438bb9ff4665e91"   # waiting_for_pedestrian_to_cross  2021.10.01.19.16.42_veh-28
+
+  # near_pedestrian_on_crosswalk_with_ego (2) — harder: ped in ego path
+  - "3068b337c1265528"   # near_pedestrian_on_crosswalk_with_ego  2021.07.16.00.51.05_veh-17
+  - "011370eb0aee5269"   # near_pedestrian_on_crosswalk_with_ego  2021.06.09.17.23.18_veh-38
+
+  # stopping_at_crosswalk (2) — reactive braking for ped
+  - "2e541279db5e54dc"   # stopping_at_crosswalk  2021.09.16.15.12.03_veh-42
+  - "58a851af070d51f5"   # stopping_at_crosswalk  2021.07.16.20.45.29_veh-35
+
+  # ── BUCKET: stop_and_go (12 total) ───────────────────────────────────────
+  # stationary_at_traffic_light_with_lead (4)
+  - "0136ce79864c53e1"   # stationary_at_traffic_light_with_lead  2021.08.17.17.17.01_veh-45
+  - "63c0d18e14e95614"   # stationary_at_traffic_light_with_lead  2021.06.09.17.23.18_veh-38
+  - "8651a624b8e053e5"   # stationary_at_traffic_light_with_lead  2021.10.01.19.16.42_veh-28
+  - "507796bd81f85488"   # stationary_at_traffic_light_with_lead  2021.07.16.00.51.05_veh-17
+
+  # stationary_at_traffic_light_without_lead (3)
+  - "1a8d7fd7e4665035"   # stationary_at_traffic_light_without_lead  2021.06.07.18.53.26_veh-26
+  - "40f4536df111542e"   # stationary_at_traffic_light_without_lead  2021.06.07.18.53.26_veh-26
+  - "ec41e9a5568b5e91"   # stationary_at_traffic_light_without_lead  2021.10.05.07.10.04_veh-52
+
+  # stationary_in_traffic (3) — congestion
+  - "206b6bcd35cd5851"   # stationary_in_traffic  2021.06.08.16.31.33_veh-38
+  - "d69b4961d6805efb"   # stationary_in_traffic  2021.06.09.14.58.55_veh-35
+  - "49257bb4538853d7"   # stationary_in_traffic  2021.06.14.19.22.11_veh-38
+
+  # accelerating_at_traffic_light (2) — light-to-motion
+  - "b5d0d545cf3d5866"   # accelerating_at_traffic_light  2021.06.23.17.31.36_veh-16
+  - "e80597b4ff5d5df4"   # accelerating_at_traffic_light  2021.06.09.17.23.18_veh-38
+
+  # ── BUCKET: high_medium_speed (12 total) ─────────────────────────────────
+  # high_magnitude_speed (5) — highway / fast urban
+  - "717bda59717858f1"   # high_magnitude_speed  2021.06.14.19.22.11_veh-38
+  - "8fdd3232f5c45c0c"   # high_magnitude_speed  2021.06.28.16.57.59_veh-26
+  - "6f8aef4372505a58"   # high_magnitude_speed  2021.05.12.22.28.35_veh-35
+  - "8d91e459e9ee565d"   # high_magnitude_speed  2021.06.08.16.31.33_veh-38
+  - "d8a1fe0fe19f536d"   # high_magnitude_speed  2021.06.28.16.29.11_veh-38
+
+  # medium_magnitude_speed (5)
+  - "400d04565f185681"   # medium_magnitude_speed  2021.06.14.16.32.09_veh-35
+  - "eaf0200162f557cd"   # medium_magnitude_speed  2021.10.01.19.16.42_veh-28
+  - "2fa3fc8c483e59a0"   # medium_magnitude_speed  2021.05.12.23.36.44_veh-35
+  - "015aa71c8cb25c7e"   # medium_magnitude_speed  2021.08.17.17.17.01_veh-45
+  - "c9f4f53766fb562a"   # medium_magnitude_speed  2021.06.03.13.55.17_veh-35
+
+  # low_magnitude_speed (2) — slow / parking-lot like
+  - "4a275c4d8e125040"   # low_magnitude_speed  2021.05.25.14.16.10_veh-35
+  - "2a588e182fe957de"   # low_magnitude_speed  2021.06.28.16.29.11_veh-38
+
+  # ── BUCKET: near_long_vehicle (10 total) ─────────────────────────────────
+  # near_long_vehicle (5) — trucks / buses
+  - "832f0530135855ee"   # near_long_vehicle  2021.08.17.17.17.01_veh-45
+  - "a845d1edea4e55a0"   # near_long_vehicle  2021.06.28.16.57.59_veh-26
+  - "0d88ad652c10567c"   # near_long_vehicle  2021.08.17.16.57.11_veh-08
+  - "eee67425864c5f73"   # near_long_vehicle  2021.07.09.20.59.12_veh-38
+  - "83172080c67659da"   # near_long_vehicle  2021.06.09.12.39.51_veh-26
+
+  # near_multiple_vehicles (3) — dense traffic, partial occlusion
+  - "d21aca9313b15c48"   # near_multiple_vehicles  2021.08.17.16.57.11_veh-08
+  - "1f151e15c9cf5c81"   # near_multiple_vehicles  2021.06.08.14.35.24_veh-26
+  - "18298fd45195563d"   # near_multiple_vehicles  2021.10.06.17.43.07_veh-28
+
+  # near_high_speed_vehicle (2) — speed differential interaction
+  - "c2dc8e71fb6059a4"   # near_high_speed_vehicle  2021.06.09.12.39.51_veh-26
+  - "109cafdca88e576a"   # near_high_speed_vehicle  2021.07.09.20.59.12_veh-38
+
+  # ── BUCKET: edge_cases (8 total) ─────────────────────────────────────────
+  # high_lateral_acceleration (2) — aggressive cornering
+  - "99d5fe3cccad5302"   # high_lateral_acceleration  2021.07.16.00.51.05_veh-17
+  - "bcc310d4c8d95b2f"   # high_lateral_acceleration  2021.06.28.15.02.02_veh-38
+
+  # near_trafficcone_on_driveable (2) — construction obstacle
+  - "5431f27eda4b5d82"   # near_trafficcone_on_driveable  2021.06.28.16.29.11_veh-38
+  - "1c19a43d3a1b5961"   # near_trafficcone_on_driveable  2021.06.14.17.26.26_veh-38
+
+  # near_construction_zone_sign (2) — roadwork context
+  - "8395705127865015"   # near_construction_zone_sign  2021.05.12.22.00.38_veh-35
+  - "bc3a50a588535e05"   # near_construction_zone_sign  2021.06.28.16.29.11_veh-38
+
+  # near_multiple_pedestrians (2) — dense pedestrian crowd
+  - "c23a04de6eba520c"   # near_multiple_pedestrians  2021.06.28.16.29.11_veh-38
+  - "cc1d648ab526530a"   # near_multiple_pedestrians  2021.07.09.17.06.37_veh-35
+
+expand_scenarios: false
+remove_invalid_goals: false
+shuffle: false
+num_scenarios_per_type: null
+limit_total_scenarios: null

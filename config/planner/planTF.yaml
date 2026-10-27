@@ -3,6 +3,11 @@ imitation_planner:
   _convert_: "all"
 
   replan_interval: 1
+  record_latency: false  # set true to record per-step latency to benchmarks/mini_v1/latency.csv
+  use_mode_reranker: false  # true = geometric mode re-ranking (src/planners/mode_reranker.py)
+  reranker_lambda: 0.3      # coverage weight; only used when use_mode_reranker=true
+  use_tl_brake: false       # true = experimental red-light stop override (src/planners/tl_safety.py)
+  model_patch: none         # none | natten_exact | natten_onnx | natten_faithful | onnx_export (closed-loop eval of deployable variants)
 
   planner:
     _target_: src.models.planTF.planning_model.PlanningModel

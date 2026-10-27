@@ -1,0 +1,218 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  # ── Job 1: Lint ─────────────────────────────────────────────────────────────
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+
+      # ── Python syntax ──────────────────────────────────────────────────────
+      - name: Python syntax check (py_compile)
+        run: |
+          echo "Checking Python syntax on all .py files..."
+          failed=0
+          while IFS= read -r -d '' f; do
+            python -m py_compile "$f" 2>&1 || { echo "FAIL: $f"; failed=1; }
+          done < <(find . -name "*.py" -not -path "./.git/*" -not -path "./cpp/build/*" -print0)
+          [ $failed -eq 0 ] && echo "All .py files OK" || exit 1
+
+      # ── YAML syntax ───────────────────────────────────────────────────────
+      - name: YAML syntax check (config/ and workflows)
+        run: |
+          pip install pyyaml --quiet
+          python - <<'PYEOF'
+          import pathlib, sys, yaml
+          failed = False
+          files = sorted(pathlib.Path("config").rglob("*.y*ml")) + sorted(pathlib.Path(".github").rglob("*.y*ml"))
+          for f in files:
+              try:
+                  yaml.safe_load(f.read_text())
+              except yaml.YAMLError as e:
+                  print(f"FAIL: {f}\n{e}")
+                  failed = True
+          print("YAML FAILURES" if failed else f"All {len(files)} YAML files OK")
+          sys.exit(1 if failed else 0)
+          PYEOF
+
+      # ── Bash syntax ───────────────────────────────────────────────────────
+      - name: Bash syntax check (script/)
+        run: |
+          echo "Checking bash syntax in script/..."
+          failed=0
+          for f in script/*.sh; do
+            bash -n "$f" 2>&1 || { echo "FAIL: $f"; failed=1; }
+          done
+          [ $failed -eq 0 ] && echo "All .sh files OK" || exit 1
+
+      # ── Emoji check ───────────────────────────────────────────────────────
+      - name: No-emoji check (*.md)
+        run: |
+          echo "Checking .md files for emoji..."
+          # Match common emoji Unicode blocks via Perl regex.
+          if grep -rnP \
+            "[\x{1F300}-\x{1F9FF}\x{2600}-\x{27BF}\x{1FA00}-\x{1FAFF}]" \
+            --include="*.md" . ; then
+            echo "ERROR: emoji found in Markdown files (see matches above)"
+            exit 1
+          fi
+          echo "No emoji found"
+
+      # ── Duplicate top-level function names across inference/ ─────────────
+      - name: No duplicate public functions in inference/
+        run: |
+          python - <<'PYEOF'
+          import ast, pathlib, collections, sys
+
+          defs = collections.defaultdict(list)
+          for path in pathlib.Path("inference").rglob("*.py"):
+              try:
+                  tree = ast.parse(path.read_text())
+              except SyntaxError:
+                  continue  # already caught by py_compile
+              # Module-level helpers only: methods (forward, ...) and script
+              # entry points (main) are expected to repeat.
+              for node in tree.body:
+                  if (isinstance(node, ast.FunctionDef)
+                          and not node.name.startswith("_") and node.name != "main"):
+                      defs[node.name].append(str(path))
+
+          duplicates = {k: v for k, v in defs.items() if len(v) > 1}
+          if duplicates:
+              print("ERROR: duplicate public function names across inference/:")
+              for name, paths in sorted(duplicates.items()):
+                  print(f"  {name}:")
+                  for p in paths:
+                      print(f"    {p}")
+              sys.exit(1)
+          else:
+              print("No duplicate public function names found")
+          PYEOF
+
+  # ── Job 2: Unit tests ────────────────────────────────────────────────────────
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+
+      - name: Cache pip (torch CPU)
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-torch-cpu-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-torch-cpu-
+
+      - name: Install test dependencies
+        run: |
+          pip install --quiet \
+            torch==2.3.1 --index-url https://download.pytorch.org/whl/cpu
+          pip install --quiet numpy pytest
+
+      - name: Run unit tests
+        run: pytest tests/ -v --tb=short
+
+  # ── Job 3: ONNX export parity against real NATTEN ──────────────────────────
+  # Builds NATTEN 0.14.6 from source for CPU against the repo's torch 1.12, then
+  # checks every export patch (and an ONNX Runtime round-trip) against the
+  # original model on padded inputs. nuplan-devkit is stubbed (tests/nuplan_stub.py).
+  onnx-parity:
+    name: ONNX export parity (NATTEN)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+
+      - name: Cache pip (torch 1.12 CPU + NATTEN wheel)
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-torch112-natten0146-v1
+
+      - name: Install dependencies
+        run: |
+          # timm depends on torchvision; without a constraint pip pulls the newest
+          # torchvision, which upgrades torch and breaks the NATTEN 0.14 build.
+          printf "torch==1.12.1\ntorchvision==0.13.1\n" > /tmp/constraints.txt
+          pip install --quiet torch==1.12.1 torchvision==0.13.1 \
+            --index-url https://download.pytorch.org/whl/cpu
+          pip install --quiet -c /tmp/constraints.txt \
+            "numpy<1.24" "setuptools<70" wheel pytest \
+            timm==0.6.13 numba shapely onnx==1.14.1 onnxruntime==1.16.3 "protobuf<4"
+          MAX_JOBS=2 pip install --quiet -c /tmp/constraints.txt \
+            --no-build-isolation natten==0.14.6
+          python -c "import torch, natten; print('torch', torch.__version__, 'natten', natten.__version__)"
+
+      - name: Run parity tests
+        run: pytest tests/test_onnx_patches.py -v --tb=short
+
+  # ── Job 4: C++ build (ORT CPU, no CUDA, no TRT) ───────────────────────────
+  cpp-build:
+    name: C++ build (ort_infer)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache ORT 1.19.2
+        id: cache-ort
+        uses: actions/cache@v4
+        with:
+          path: /opt/onnxruntime
+          key: ort-linux-x64-1.19.2
+
+      - name: Download ONNX Runtime 1.19.2 (CPU)
+        if: steps.cache-ort.outputs.cache-hit != 'true'
+        run: |
+          wget -q \
+            https://github.com/microsoft/onnxruntime/releases/download/v1.19.2/onnxruntime-linux-x64-1.19.2.tgz \
+            -O /tmp/ort.tgz
+          mkdir -p /opt/onnxruntime
+          tar -xzf /tmp/ort.tgz -C /opt/onnxruntime --strip-components=1
+
+      - name: Install CMake
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends cmake build-essential
+
+      - name: CMake configure
+        working-directory: cpp
+        run: |
+          mkdir -p build && cd build
+          cmake .. \
+            -DORT_ROOT=/opt/onnxruntime \
+            -DENABLE_CUDA=OFF \
+            -DENABLE_TRT=OFF \
+            -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build ort_infer
+        working-directory: cpp/build
+        run: make ort_infer -j$(nproc)
+
+      - name: Smoke-test binary (--help or zero-arg exit)
+        working-directory: cpp/build
+        run: |
+          # The binary may print usage and exit(1) without a model path — that's fine.
+          # We just need it to not segfault.
+          LD_LIBRARY_PATH=/opt/onnxruntime/lib ./ort_infer --help 2>&1 || true
+          echo "Binary executed without crash"

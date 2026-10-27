@@ -38,6 +38,9 @@ def print_simulation_results(file=None):
     else:
         root = Path(os.getcwd()) / "aggregator_metric"
         result = list(root.glob("*.parquet"))
+        if not result:
+            logger.warning("No aggregated metric files found in %s, skipping result summary.", root)
+            return
         result = max(result, key=lambda item: item.stat().st_ctime)
         df = pd.read_parquet(result)
     final_score = df[df["scenario"] == "final_score"]

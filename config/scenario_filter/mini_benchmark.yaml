@@ -1,0 +1,22 @@
+# _target_: nuplan.planning.scenario_builder.nuplan_db.nuplan_scenario_filter.NuPlanScenarioFilter
+
+# log_names: null
+
+defaults:
+  - mini
+  
+scenario_tokens:
+  - 38b71d6e2dc65a1d  # following_lane_with_slow_lead
+  - 0d48c024a6455ace # near_long_vehicle
+  - 1dbcee5b8ba55210 # near_pedestrian_on_crosswalk
+  - c037d6199bb25375 # traversing_intersection 2021.10.05.07.10.04_veh-52_01442_01802
+  - a3b4b8e47696534e # traversing_traffic_light_intersection 2021.10.01.19.16.42_veh-28_02011_02410
+  - b391c0fa8349515b # stationary 2021.06.14.17.26.26_veh-38_04544_04920
+  - 10460185498255a9 # medium_magnitude_speed 2021.06.09.14.03.17_veh-12_02584_02970
+  - 00699cdbd1a051bd # high_magnitude_speed 2021.05.12.23.36.44_veh-35_00152_00504
+  - e4d09605e2b6563e # on_traffic_light_intersection 2021.06.08.12.54.54_veh-26_04262_04732
+  - 3cb701313ff0518e # stationary_at_traffic_light_with_lead 2021.08.30.14.54.34_veh-40_00439_00835
+
+expand_scenarios: false
+remove_invalid_goals: false
+shuffle: false

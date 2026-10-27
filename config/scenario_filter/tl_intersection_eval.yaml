@@ -1,0 +1,48 @@
+# tl_intersection_eval.yaml
+# --------------------------
+# 21 traffic-light intersection scenarios from mini_eval_v2, extracted from the
+# 2026-03-25 baseline run (84 scenarios, score=0.8401).
+#
+# Use this filter to quickly evaluate TL-specific changes (e.g. tl_safety.py)
+# without running the full 84-scenario suite (~5 min vs ~20 min on an RTX 3060 laptop).
+#
+# Baseline scores per scenario:
+#   5 × score=0.000  (zero-score, post-processor targets these)
+#   16 × score=0.847–1.000  (passing, should be unaffected)
+#
+# Baseline type-level score: 0.7223
+
+defaults:
+  - mini
+
+scenario_tokens:
+  # --- zero-score in baseline (post-processor targets) ---
+  - "48a1b05d9c6f5fd7"   # traversing_traffic_light_intersection  drivable=0 dir=0
+  - "d9ee9cf40a84520f"   # traversing_traffic_light_intersection  collision=0 ttc=0
+  - "a3b4b8e47696534e"   # traversing_traffic_light_intersection  dir=0
+  - "eaf0200162f557cd"   # traversing_traffic_light_intersection  dir=0
+  - "edb1d6776eb25f5d"   # traversing_traffic_light_intersection  drivable=0
+  - "e4d09605e2b6563e"   # on_traffic_light_intersection          comfort=0 ttc=0
+
+  # --- passing in baseline (regression check) ---
+  - "060ad54472b05ea0"   # traversing_traffic_light_intersection  score=1.0000
+  - "1f151e15c9cf5c81"   # traversing_traffic_light_intersection  score=0.9777
+  - "e64e3a2b210d5f95"   # traversing_traffic_light_intersection  score=1.0000
+  - "3db7cabddcbe591e"   # traversing_traffic_light_intersection  score=1.0000
+  - "d8a1fe0fe19f536d"   # traversing_traffic_light_intersection  score=0.9687
+  - "c9f4f53766fb562a"   # traversing_traffic_light_intersection  score=0.9620
+  - "688f4053f8a4536d"   # traversing_traffic_light_intersection  score=0.9908
+  - "e80597b4ff5d5df4"   # traversing_traffic_light_intersection  score=0.9548
+  - "3068b337c1265528"   # traversing_traffic_light_intersection  score=0.9576
+  - "d0075a0c95e05ef0"   # traversing_traffic_light_intersection  score=0.8750
+  - "c23a04de6eba520c"   # traversing_traffic_light_intersection  score=1.0000
+  - "011370eb0aee5269"   # traversing_traffic_light_intersection  score=0.9607
+  - "b5d0d545cf3d5866"   # traversing_traffic_light_intersection  score=0.8473
+  - "bcc310d4c8d95b2f"   # traversing_traffic_light_intersection  score=0.9802
+  - "9795ca33309c56bb"   # traversing_traffic_light_intersection  score=0.9702
+
+expand_scenarios: false
+remove_invalid_goals: false
+shuffle: false
+num_scenarios_per_type: null
+limit_total_scenarios: null

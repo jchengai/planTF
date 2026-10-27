@@ -159,5 +159,9 @@ cython_debug/
 .vscode
 wandb/
 outputs/
+!outputs/eval_v2/
+!outputs/eval_v2/**
 *.ckpt
+inference/*.onnx
+inference/*.trt
 checkpoints/

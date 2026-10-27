@@ -77,7 +77,7 @@ class NATSequenceEncoder(nn.Module):
         for i in range(len(out) - 1, 0, -1):
             laterals[i - 1] = laterals[i - 1] + F.interpolate(
                 laterals[i],
-                scale_factor=(laterals[i - 1].shape[-1] / laterals[i].shape[-1]),
+                size=[laterals[i - 1].shape[-1]],
                 mode="linear",
                 align_corners=False,
             )
